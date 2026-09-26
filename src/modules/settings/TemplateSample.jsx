@@ -56,10 +56,18 @@ const CONTENT = {
   ),
 };
 
+/** A child aged 1y 6m 10d today. */
+function sampleBirthDate() {
+  const date = new Date();
+  date.setDate(date.getDate() - 10);
+  date.setMonth(date.getMonth() - 18);
+  return isoDate(date);
+}
+
 /** The exact sheet the doctor writes on, with sample patient details and an empty Rx area. */
 function PrescriptionSample({ template }) {
   const appointment = {
-    patientName: 'Sample Patient', patientAgeText: '1 year 6 months', patientGender: 'FEMALE',
+    patientName: 'Sample Patient', patientDateOfBirth: sampleBirthDate(), patientGender: 'FEMALE',
     patientCode: 'PAT-00000', patientPhone: '98xxxxxx00', patientAddress: 'Sample address, City', appointmentDate: isoDate(),
   };
   const hint = <p className="absolute inset-0 flex items-center justify-center text-sm text-slate-300">The doctor writes here with pen or finger</p>;

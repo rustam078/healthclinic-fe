@@ -66,7 +66,7 @@ function LogoCard({ settings }) {
       <CardHeader title="Clinic logo" subtitle="PNG, JPG or WebP up to 2 MB. It is scaled to fit — never stretched or cropped." />
       <CardBody className="space-y-4">
         <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-[repeating-conic-gradient(#f1f5f9_0_25%,#fff_0_50%)] bg-[length:16px_16px] p-4">
-          <LogoBox src={settings.logoUrl} width={settings.logoWidth} height={settings.logoHeight} className="outline outline-1 outline-dashed outline-teal-300" />
+          <LogoBox src={settings.logoUrl} width={settings.logoWidth} height={settings.logoHeight} stretch className="outline outline-1 outline-dashed outline-teal-300" />
         </div>
         <p className="text-xs text-slate-500">
           {settings.logoUrl ? 'Uploaded logo' : 'No logo uploaded — the default placeholder is shown'} · display area {settings.logoWidth} × {settings.logoHeight} px (dashed outline)
@@ -125,7 +125,7 @@ function HeaderPreview({ settings, width, height, position, tagline }) {
     <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white p-4">
       <p className="mb-2 text-xs font-medium text-slate-500">Preview</p>
       <div className={`flex items-center gap-4 border-b border-slate-200 pb-3 ${reverse} ${center}`}>
-        <LogoBox src={settings.logoUrl} width={Math.min(width, 600)} height={Math.min(height, 300)} position={position} className="outline outline-1 outline-dashed outline-slate-300" />
+        <LogoBox src={settings.logoUrl} width={Math.min(width, 600)} height={Math.min(height, 300)} position={position} stretch className="outline outline-1 outline-dashed outline-slate-300" />
         <div className={position === 'LEFT' ? 'text-right flex-1' : 'flex-1'}>
           <p className="font-semibold text-brand-800">{settings.clinicName}</p>
           {tagline && <p className="text-xs text-slate-500 italic">{tagline}</p>}

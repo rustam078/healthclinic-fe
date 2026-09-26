@@ -34,7 +34,7 @@ function DocumentHeader({ template, settings, accent }) {
       style={{ minHeight: template.headerHeight, borderColor: `${accent}55` }}
     >
       {template.showLogo && (
-        <LogoBox src={settings?.logoUrl} width={template.logoAreaWidth} height={template.logoAreaHeight} position={position} />
+        <LogoBox src={settings?.logoUrl} width={template.logoAreaWidth} height={template.logoAreaHeight} position={position} stretch />
       )}
       <div className={`min-w-0 flex-1 ${position === 'RIGHT' ? 'text-left' : position === 'CENTER' ? '' : 'text-right'}`}>
         <p className="text-base font-bold" style={{ color: accent }}>{settings?.clinicName}</p>

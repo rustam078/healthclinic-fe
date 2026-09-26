@@ -18,6 +18,12 @@
   :focus-visible { @apply outline-2 outline-offset-2 outline-brand-600; }
 }
 
+/* Charts: no focus box around the chart, bars or slices when they are clicked or tapped. */
+.recharts-wrapper,
+.recharts-wrapper *,
+.recharts-responsive-container,
+.recharts-responsive-container * { outline: none !important; }
+
 /* Print area is hidden on screen; when printing, only it is shown. */
 #print-root { display: none; }
 

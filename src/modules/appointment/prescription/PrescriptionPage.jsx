@@ -182,7 +182,7 @@ function FollowUpPicker({ appointment, value, onChange }) {
         const date = isoDate(addDays(days, base));
         return (
           <button key={days} type="button" aria-pressed={value === date} onClick={() => onChange(value === date ? '' : date)}
-            className={`rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${value === date ? 'bg-brand-700 text-white ring-brand-700' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}>
+            className={`rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset pointer-coarse:min-h-10 ${value === date ? 'bg-brand-700 text-white ring-brand-700' : 'bg-white text-slate-700 ring-slate-300 hover:bg-slate-50'}`}>
             +{days} days
           </button>
         );

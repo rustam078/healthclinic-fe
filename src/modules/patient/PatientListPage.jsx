@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useLiveList } from '../../hooks/useLiveList';
 import { Eye, Pencil, UserPlus, Users } from 'lucide-react';
 import { patientsApi } from '../../api/endpoints';
 import { useList } from '../../hooks/useResource';
@@ -21,7 +22,7 @@ export default function PatientListPage() {
   const { can } = useAuth();
   const canWrite = can('PATIENT', 'WRITE');
   const [filters, setFilters] = useFilters(DEFAULTS);
-  const query = useList(patientsApi, filters);
+  const query = useList(patientsApi, filters, useLiveList());
   const hasFilters = filters.search || filters.status || filters.from || filters.to;
 
   const toolbar = (

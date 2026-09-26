@@ -4,11 +4,12 @@ import { patientsApi } from '../../api/endpoints';
 import { useSave } from '../../hooks/useResource';
 import { useEntityForm } from '../../hooks/useEntityForm';
 import {
-  FormGrid, FormSection, SelectField, TextAreaField, TextField,
+  FormGrid, FormSection, RandomPhoneButton, SelectField, TextAreaField, TextField,
 } from '../../components/form/Fields';
 import Button from '../../components/ui/Button';
 import { BLOOD_GROUP_OPTIONS, GENDER_OPTIONS } from '../../utils/options';
 import { statusOptions } from '../../utils/status';
+import { randomIndianMobile } from '../../utils/format';
 import AgeInput from '../../components/form/AgeInput';
 import { patientSchema, toPatientForm } from './patientSchema';
 
@@ -19,14 +20,16 @@ import { patientSchema, toPatientForm } from './patientSchema';
 export default function PatientForm({ patient, initialValues, onSaved, onCancel, compact = false }) {
   const mutation = useSave(patientsApi, patient?.id, { onSuccess: onSaved });
   const form = useEntityForm({ schema: patientSchema, defaultValues: toPatientForm(patient, initialValues), mutation });
-  const { register, errorOf } = form;
+  const { register, errorOf, setValue } = form;
+  const randomPhone = () => setValue('phone', randomIndianMobile(), { shouldValidate: true, shouldDirty: true });
 
   return (
     <form onSubmit={form.submit} noValidate className="space-y-6">
       <FormSection title="Basic information">
         <FormGrid>
           <TextField label="Full name" required error={errorOf('fullName')} {...register('fullName')} data-autofocus />
-          <TextField label="Mobile number" required type="tel" inputMode="tel" error={errorOf('phone')} {...register('phone')} />
+          <TextField label="Mobile number" required type="tel" inputMode="tel" error={errorOf('phone')} {...register('phone')}
+            trailing={<RandomPhoneButton onClick={randomPhone} />} />
           <SelectField label="Gender" required placeholder="Select gender" options={GENDER_OPTIONS} error={errorOf('gender')} {...register('gender')} />
           {!compact && <SelectField label="Blood group" placeholder="Not known" options={BLOOD_GROUP_OPTIONS} error={errorOf('bloodGroup')} {...register('bloodGroup')} />}
           {patient && <SelectField label="Status" options={statusOptions('patient')} {...register('status')} />}

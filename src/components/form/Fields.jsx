@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { Dices } from 'lucide-react';
 
 export const controlClass = (error) =>
   `block w-full rounded-lg border bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400
@@ -25,11 +26,28 @@ export function FormField({ label, error, hint, required, className = '', childr
   );
 }
 
-export function TextField({ label, error, hint, required, className, ...inputProps }) {
+/** trailing: a small button shown inside the input on the right (e.g. RandomPhoneButton). */
+export function TextField({ label, error, hint, required, className, trailing, ...inputProps }) {
   return (
     <FormField label={label} error={error} hint={hint} required={required} className={className}>
-      {(aria) => <input type="text" className={`${controlClass(error)} h-10`} {...aria} {...inputProps} />}
+      {(aria) => (
+        <div className="relative">
+          <input type="text" className={`${controlClass(error)} h-10 ${trailing ? 'pr-11' : ''}`} {...aria} {...inputProps} />
+          {trailing}
+        </div>
+      )}
     </FormField>
+  );
+}
+
+/** Dice inside a mobile number field: fills a random number when the family does not want to share one. */
+export function RandomPhoneButton({ onClick }) {
+  return (
+    <button type="button" onClick={onClick} title="Use a random number (patient does not want to share one)"
+      aria-label="Generate a random mobile number"
+      className="absolute top-1/2 right-1 inline-flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-brand-700 focus-visible:ring-2 focus-visible:ring-brand-400 pointer-coarse:size-10">
+      <Dices className="size-5" aria-hidden />
+    </button>
   );
 }
 

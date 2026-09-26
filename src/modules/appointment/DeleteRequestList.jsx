@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLiveList } from '../../hooks/useLiveList';
 import { Check, Inbox, X } from 'lucide-react';
 import { appointmentsApi, deleteRequestsApi } from '../../api/endpoints';
 import { useApiMutation, useList } from '../../hooks/useResource';
@@ -24,7 +25,7 @@ export default function DeleteRequestList() {
   const { canDo } = useAuth();
   const isApprover = canDo('APPOINTMENT_APPROVE_DELETE');
   const [filters, setFilters] = useFilters({ search: '', status: 'PENDING' });
-  const query = useList(deleteRequestsApi, filters);
+  const query = useList(deleteRequestsApi, filters, useLiveList());
   const [pending, setPending] = useState(null);
   const decide = useApiMutation(({ row, status }) => deleteRequestsApi.status(row.id, status), {
     success: () => DECISIONS[pending.status].success,

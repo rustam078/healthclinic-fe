@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { usePageTitle } from '../../hooks/useBrowserTab';
 
 /** Page title, optional breadcrumbs and action buttons. Also sets the browser tab title. */
 export default function PageHeader({ title, subtitle, breadcrumbs, actions }) {
-  useEffect(() => { document.title = `${title} · Clinic`; }, [title]);
+  usePageTitle(title);
   return (
     <div className="mb-6">
       {breadcrumbs && (

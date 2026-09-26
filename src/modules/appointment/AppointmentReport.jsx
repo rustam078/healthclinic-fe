@@ -1,10 +1,10 @@
-import { Banknote, CalendarCheck, CalendarClock, CalendarDays, Repeat, Stethoscope } from 'lucide-react';
+import { Banknote, CalendarDays, Stethoscope } from 'lucide-react';
 import { appointmentsApi } from '../../api/endpoints';
 import { useReport } from '../../hooks/useResource';
 import { useFilters } from '../../hooks/useFilters';
 import { useClinicSettings } from '../../hooks/useClinicSettings';
 import ReportView from '../../components/report/ReportView';
-import StatCard, { StatGrid } from '../../components/report/StatCard';
+import StatCard, { SplitStatCard, StatGrid } from '../../components/report/StatCard';
 import { BreakdownBars, ChartCard, TrendChart, fillDays } from '../../components/report/charts';
 import { DateRange, FilterBar, FilterSelect } from '../../components/data/Filters';
 import { statusInfo, statusOptions } from '../../utils/status';
@@ -57,12 +57,16 @@ export function summarise({ summary, breakdown, amounts }, currency) {
     { label: 'Fees of completed visits', value: formatMoney(amounts.completedFees, currency) },
   ];
   const tiles = (
-    <StatGrid>
-      <StatCard label="Total appointments" value={count('TOTAL')} icon={CalendarDays} accent="brand" />
-      <StatCard label="Completed" value={count('COMPLETED')} icon={CalendarCheck} accent="good" />
-      <StatCard label="Waiting" value={count('SCHEDULED')} icon={CalendarClock} accent="info" />
-      <StatCard label="Consultations" value={visits('CONSULTATION')} icon={Stethoscope} />
-      <StatCard label="Free follow-ups" value={visits('FOLLOW_UP')} icon={Repeat} />
+    <StatGrid columns={4}>
+      <SplitStatCard label="Appointments" icon={CalendarDays} accent="brand" parts={[
+        { label: 'Total', value: count('TOTAL'), tone: 'text-slate-900' },
+        { label: 'Completed', value: count('COMPLETED'), tone: 'text-emerald-700' },
+        { label: 'Waiting', value: count('SCHEDULED'), tone: 'text-sky-700' },
+      ]} />
+      <SplitStatCard label="Visit type" icon={Stethoscope} parts={[
+        { label: 'Consultations', value: visits('CONSULTATION'), tone: 'text-brand-700' },
+        { label: 'Free follow-ups', value: visits('FOLLOW_UP'), tone: 'text-violet-700' },
+      ]} />
       <StatCard label="Completed visit fees" value={formatMoney(amounts.completedFees, currency)} hint="For information only" icon={Banknote} />
       <StatCard label="All booked fees" value={formatMoney(amounts.expectedFees, currency)} hint="Completed and waiting" icon={Banknote} />
     </StatGrid>

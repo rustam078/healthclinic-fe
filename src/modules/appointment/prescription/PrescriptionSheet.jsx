@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { doctorsApi } from '../../../api/endpoints';
 import DocumentTemplate from '../../../components/print/DocumentTemplate';
 import LogoBox from '../../../components/print/LogoBox';
-import { formatDate, labelize } from '../../../utils/format';
+import { formatDate, shortAge } from '../../../utils/format';
 import { inkToDataUrl, parseStrokes } from './ink';
 
 /** Heights of the fixed parts of the sheet (CSS px) so the writing area fills the rest of the page. */
@@ -47,7 +47,7 @@ function PrescriptionHeader({ template, settings, doctor }) {
         {contact && <p className="text-xs text-slate-600">{contact}</p>}
         {settings?.availabilityText && <p className="mt-1 inline-block rounded px-1.5 py-0.5 text-xs font-bold text-white" style={{ backgroundColor: accent }}>{settings.availabilityText}</p>}
       </div>
-      {template.showLogo ? <LogoBox src={settings?.logoUrl} width={template.logoAreaWidth} height={template.logoAreaHeight} /> : <span />}
+      {template.showLogo ? <LogoBox src={settings?.logoUrl} width={template.logoAreaWidth} height={template.logoAreaHeight} stretch /> : <span />}
       <div className="min-w-0 text-right">
         <p className="text-base leading-tight font-bold text-slate-900">{doctor?.fullName || 'Doctor'}</p>
         {doctor?.specialization && <p className="text-xs text-slate-700">{doctor.specialization}</p>}
@@ -76,12 +76,14 @@ export default function PrescriptionContent({ template, appointment, followUpDat
   );
 }
 
+const SEX = { MALE: 'M', FEMALE: 'F', OTHER: 'O' };
+
 /** Full-width patient strip: 5 columns, closed by a bold bottom rule. */
 function PatientBox({ appointment, weight }) {
   return (
-    <div className="mb-2 grid grid-cols-[1.5fr_1.2fr_0.9fr_auto_2fr] items-start gap-x-4 border-b-2 border-slate-800 pb-2" style={{ height: BLOCKS.band - 8 }}>
+    <div className="mb-2 grid grid-cols-[1.4fr_1.3fr_0.9fr_auto_1.9fr] items-start gap-x-4 border-b-2 border-slate-800 pb-2" style={{ height: BLOCKS.band - 8 }}>
       <Field label="Patient" value={appointment.patientName} sub={appointment.patientCode} />
-      <Field label="Age / sex" value={[appointment.patientAgeText, labelize(appointment.patientGender)].filter(Boolean).join(' · ') || '—'} sub={appointment.patientPhone} />
+      <Field label="Age / sex" value={[shortAge(appointment.patientDateOfBirth) || appointment.patientAgeText, SEX[appointment.patientGender]].filter(Boolean).join(' / ') || '—'} sub={appointment.patientPhone} />
       <Field label="Date" value={formatDate(appointment.appointmentDate)} />
       <div>
         <p className="text-[10px] tracking-wide text-slate-500 uppercase">Wt (kg)</p>

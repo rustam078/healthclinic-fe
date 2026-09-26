@@ -66,7 +66,7 @@ function ReportSnapshot({ report, from, to }) {
           <div role="group" aria-label="Graph type" className="inline-flex rounded-lg bg-slate-100 p-1">
             {CHART_KINDS.map((option) => (
               <button key={option.id} type="button" aria-pressed={kind === option.id} onClick={() => setKind(option.id)}
-                className={`rounded-md px-3 py-1 text-xs font-medium ${kind === option.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
+                className={`rounded-md px-3 py-1 text-xs font-medium pointer-coarse:min-h-9 ${kind === option.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
                 {option.label}
               </button>
             ))}

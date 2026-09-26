@@ -13,16 +13,20 @@ export function FilterSelect({ label, value, onChange, options, allLabel = 'All'
   );
 }
 
+/**
+ * From / To dates. On phones the pair takes its own row, split in two equal halves that the date boxes fill
+ * (native date boxes otherwise keep their own width and overlap); from tablet width up it sits inline.
+ */
 export function DateRange({ from, to, onChange }) {
   return (
-    <div className="flex min-w-0 flex-1 gap-2 sm:flex-none">
-      <label className="flex min-w-0 flex-1 flex-col gap-1">
+    <div className="grid w-full basis-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:basis-auto">
+      <label className="flex min-w-0 flex-col gap-1">
         <span className="text-xs font-medium text-slate-500">From</span>
-        <input type="date" value={from || ''} max={to || undefined} onChange={(event) => onChange({ from: event.target.value })} className={filterClass} />
+        <input type="date" value={from || ''} max={to || undefined} onChange={(event) => onChange({ from: event.target.value })} className={`${filterClass} w-full min-w-0`} />
       </label>
-      <label className="flex min-w-0 flex-1 flex-col gap-1">
+      <label className="flex min-w-0 flex-col gap-1">
         <span className="text-xs font-medium text-slate-500">To</span>
-        <input type="date" value={to || ''} min={from || undefined} onChange={(event) => onChange({ to: event.target.value })} className={filterClass} />
+        <input type="date" value={to || ''} min={from || undefined} onChange={(event) => onChange({ to: event.target.value })} className={`${filterClass} w-full min-w-0`} />
       </label>
     </div>
   );

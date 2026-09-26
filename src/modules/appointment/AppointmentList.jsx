@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
+import { useLiveList } from '../../hooks/useLiveList';
 import { CalendarDays, CalendarPlus, Eye, FileText, NotebookPen } from 'lucide-react';
 import { appointmentsApi } from '../../api/endpoints';
 import { useList } from '../../hooks/useResource';
@@ -30,7 +31,7 @@ export default function AppointmentList() {
   const { can } = useAuth();
   const [filters, setFilters] = useFilters({ search: '', status: '', type: '', ...today() });
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = useList(appointmentsApi, filters);
+  const query = useList(appointmentsApi, filters, useLiveList());
   const { data: settings } = useClinicSettings();
   const actions = useAppointmentActions();
   const openView = (id) => setSearchParams((params) => {
@@ -75,7 +76,7 @@ function Toolbar({ filters, setFilters }) {
       <div className="flex flex-wrap gap-2" role="group" aria-label="Date presets">
         {PRESETS.map((preset) => (
           <button key={preset.id} type="button" aria-pressed={active === preset.id} onClick={() => setFilters(preset.range())}
-            className={`rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset ${active === preset.id ? 'bg-brand-700 text-white ring-brand-700' : 'bg-white text-slate-600 ring-slate-300 hover:bg-slate-50'}`}>
+            className={`rounded-full px-3 py-1 text-sm font-medium ring-1 ring-inset pointer-coarse:min-h-10 ${active === preset.id ? 'bg-brand-700 text-white ring-brand-700' : 'bg-white text-slate-600 ring-slate-300 hover:bg-slate-50'}`}>
             {preset.label}
           </button>
         ))}

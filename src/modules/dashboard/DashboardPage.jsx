@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useLiveList } from '../../hooks/useLiveList';
 import {
   BedDouble, CalendarClock, CalendarDays, CheckCircle2, Inbox, LogIn, LogOut,
 } from 'lucide-react';
@@ -11,10 +12,9 @@ import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { ErrorState, Skeleton } from '../../components/ui/States';
 import StatCard, { StatGrid } from '../../components/report/StatCard';
 import { BreakdownBars, TrendChart, fillDays } from '../../components/report/charts';
-import { DateRange } from '../../components/data/Filters';
-import { formatDate } from '../../utils/format';
 import { statusInfo } from '../../utils/status';
-import { PERIODS, resolvePeriod } from './dashboardPeriod';
+import { resolvePeriod } from './dashboardPeriod';
+import PeriodPicker from './PeriodPicker';
 import {
   AdmissionRow, BedMeter, ListCard, PatientRow, ScheduleRow, ViewAll,
 } from './DashboardWidgets';
@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [filters, setFilters] = useFilters({ period: 'today', from: '', to: '' });
   const range = resolvePeriod(filters);
-  const query = useQuery({ queryKey: [dashboardApi.key, range], queryFn: () => dashboardApi.get(range) });
+  const query = useQuery({ queryKey: [dashboardApi.key, range], queryFn: () => dashboardApi.get(range), ...useLiveList() });
 
   return (
     <>
@@ -41,25 +41,6 @@ export default function DashboardPage() {
   );
 }
 
-
-function PeriodPicker({ filters, setFilters, range }) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-      <div role="group" aria-label="Period" className="inline-flex w-full rounded-lg bg-slate-100 p-1 sm:w-auto">
-        {PERIODS.map((period) => (
-          <button key={period.id} type="button" aria-pressed={filters.period === period.id}
-            onClick={() => setFilters({ period: period.id, ...(period.id === 'custom' ? range : { from: '', to: '' }) })}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium sm:flex-none ${filters.period === period.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
-            {period.label}
-          </button>
-        ))}
-      </div>
-      {filters.period === 'custom'
-        ? <DateRange from={filters.from} to={filters.to} onChange={setFilters} />
-        : <p className="text-sm text-slate-500">{range.from === range.to ? formatDate(range.from) : `${formatDate(range.from)} – ${formatDate(range.to)}`}</p>}
-    </div>
-  );
-}
 
 function Overview({ data, range }) {
   const { can } = useAuth();

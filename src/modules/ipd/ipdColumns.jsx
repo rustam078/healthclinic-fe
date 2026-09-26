@@ -27,7 +27,7 @@ export function ipdColumns({ omit = [], actions } = {}) {
       key: 'status', header: 'Status',
       render: (row) => (
         <Link to={`/ipd/${row.id}`} onClick={(event) => event.stopPropagation()} title="Open admission details"
-          className="inline-flex rounded-full hover:opacity-80 hover:ring-2 hover:ring-brand-200 focus-visible:ring-2 focus-visible:ring-brand-400">
+          className="inline-flex items-center rounded-full pointer-coarse:min-h-10 hover:opacity-80 hover:ring-2 hover:ring-brand-200 focus-visible:ring-2 focus-visible:ring-brand-400">
           <StatusBadge domain="ipd" value={row.status} />
         </Link>
       ),

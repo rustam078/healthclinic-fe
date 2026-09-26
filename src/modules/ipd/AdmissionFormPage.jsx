@@ -16,7 +16,7 @@ export default function AdmissionFormPage() {
   return (
     <>
       <PageHeader title={title} breadcrumbs={[{ label: 'IPD', to: '/ipd' }, { label: title }]} />
-      <Card className="max-w-3xl">
+      <Card className="mx-auto max-w-3xl">
         <CardBody>{id ? <EditAdmission id={id} {...props} /> : <NewAdmission {...props} />}</CardBody>
       </Card>
     </>

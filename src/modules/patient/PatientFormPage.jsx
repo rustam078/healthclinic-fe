@@ -15,7 +15,7 @@ export default function PatientFormPage() {
   const onSaved = (saved) => navigate(`/patients/${saved.id}`);
 
   const form = (patient) => (
-    <Card className="max-w-3xl">
+    <Card className="mx-auto max-w-3xl">
       <CardBody>
         <PatientForm patient={patient} onSaved={onSaved} onCancel={() => navigate(-1)} />
       </CardBody>

@@ -6,6 +6,7 @@ import AppLayout from './components/layout/AppLayout';
 import { Spinner } from './components/ui/States';
 import LoginPage from './modules/auth/LoginPage';
 import NotFoundPage from './modules/NotFoundPage';
+import { useTabIcon } from './hooks/useBrowserTab';
 
 // Each module is loaded on first visit, keeping the initial download small.
 const DashboardPage = lazy(() => import('./modules/dashboard/DashboardPage'));
@@ -27,6 +28,7 @@ const guard = (module, element, level) => (
 );
 
 export default function App() {
+  useTabIcon();
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />

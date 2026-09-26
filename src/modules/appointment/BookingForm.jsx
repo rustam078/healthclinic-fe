@@ -3,12 +3,12 @@ import { Controller } from 'react-hook-form';
 import { CalendarPlus, Phone, UserCheck } from 'lucide-react';
 import { useEntityForm } from '../../hooks/useEntityForm';
 import {
-  FormGrid, SegmentedField, TextAreaField, TextField, controlClass,
+  FormGrid, RandomPhoneButton, SegmentedField, TextAreaField, TextField, controlClass,
 } from '../../components/form/Fields';
 import AgeInput from '../../components/form/AgeInput';
 import Button from '../../components/ui/Button';
 import { GENDER_OPTIONS } from '../../utils/options';
-import { isoDate } from '../../utils/format';
+import { isoDate, randomIndianMobile } from '../../utils/format';
 import {
   bookingSchema, emptyBooking, fromPatient, toBookingPayload,
 } from './bookingSchema';
@@ -28,7 +28,7 @@ export default function BookingForm({ mutation, onCancel }) {
     mutation,
     transform: (values) => toBookingPayload(values, selected?.id),
   });
-  const { register, errorOf, control, reset, getValues, watch } = form;
+  const { register, errorOf, control, reset, getValues, setValue, watch } = form;
 
   const choose = (patient) => {
     setSelected(patient);
@@ -40,11 +40,16 @@ export default function BookingForm({ mutation, onCancel }) {
     setSelected(null);
   };
   const phoneField = register('phone', { onChange: startNew });
+  /** For families who do not want to share a number: a made-up 10-digit Indian mobile number. */
+  const randomPhone = () => {
+    startNew();
+    setValue('phone', randomIndianMobile(), { shouldValidate: true, shouldDirty: true });
+  };
 
   return (
     <form onSubmit={form.submit} noValidate className="space-y-6">
       <section className="space-y-3">
-        <PhoneInput field={phoneField} error={errorOf('phone')} />
+        <PhoneInput field={phoneField} error={errorOf('phone')} onRandom={randomPhone} />
         <PatientMatches phone={watch('phone')} selectedId={selected?.id} onSelect={choose} onNew={startNew} />
         {selected && <SelectedBanner patient={selected} />}
       </section>
@@ -55,11 +60,11 @@ export default function BookingForm({ mutation, onCancel }) {
         </FormGrid>
         <Controller name="dateOfBirth" control={control}
           render={({ field }) => <AgeInput value={field.value} onChange={field.onChange} error={errorOf('dateOfBirth')} />} />
-        <TextAreaField label="Address" rows={2} error={errorOf('address')} {...register('address')} />
-      </section>
-      <section className="space-y-3">
-        <TextField label="Date" type="date" required min={isoDate()} className="sm:max-w-xs" error={errorOf('appointmentDate')}
-          hint="Patients are seen in the order they are booked (token number)" {...register('appointmentDate')} />
+        <FormGrid>
+          <TextAreaField label="Address" rows={2} error={errorOf('address')} {...register('address')} />
+          <TextField label="Date" type="date" required min={isoDate()} error={errorOf('appointmentDate')}
+            hint="Patients are seen in the order they are booked (token number)" {...register('appointmentDate')} />
+        </FormGrid>
         <VisitSummary patientId={selected?.id} date={watch('appointmentDate')} />
       </section>
       <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
@@ -70,7 +75,7 @@ export default function BookingForm({ mutation, onCancel }) {
   );
 }
 
-function PhoneInput({ field, error }) {
+function PhoneInput({ field, error, onRandom }) {
   return (
     <div>
       <label htmlFor="booking-phone" className="mb-1 block text-sm font-medium text-slate-700">
@@ -79,7 +84,8 @@ function PhoneInput({ field, error }) {
       <div className="relative">
         <Phone className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" aria-hidden />
         <input id="booking-phone" type="tel" inputMode="tel" autoComplete="off" autoFocus placeholder="Type the parent's mobile number"
-          aria-invalid={Boolean(error)} className={`${controlClass(error)} h-12 pl-9 text-base tracking-wide`} {...field} />
+          aria-invalid={Boolean(error)} className={`${controlClass(error)} h-12 pr-12 pl-9 text-base tracking-wide`} {...field} />
+        <RandomPhoneButton onClick={onRandom} />
       </div>
       {error && <p className="mt-1 text-xs text-rose-600">{error}</p>}
     </div>

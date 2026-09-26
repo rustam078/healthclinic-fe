@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLiveList } from '../../hooks/useLiveList';
 import { Link } from 'react-router-dom';
 import { BedDouble, CheckCircle2, Clock, Wrench } from 'lucide-react';
 import { bedsApi, roomsApi } from '../../api/endpoints';
@@ -24,7 +25,7 @@ const BED_TONE = {
 
 /** Simple room-by-room view of every bed and its state. */
 export default function BedBoard() {
-  const query = useList(roomsApi, { size: 100, status: 'ACTIVE' });
+  const query = useList(roomsApi, { size: 100, status: 'ACTIVE' }, useLiveList());
   const [selected, setSelected] = useState(null);
   return (
     <QueryState

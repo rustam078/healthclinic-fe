@@ -29,6 +29,31 @@ export function formatMoney(amount, symbol = '₹') {
 }
 
 /** SEMI_PRIVATE -> "Semi private". */
+/** A made-up 10-digit Indian mobile number (starts with 6-9), for families who do not want to share theirs. */
+export function randomIndianMobile() {
+  const rest = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join('');
+  return String(6 + Math.floor(Math.random() * 4)) + rest;
+}
+
+/** Short exact age from a date of birth, e.g. "3y 2m 5d" (zero parts left out). */
+export function shortAge(dateOfBirth, today = new Date()) {
+  if (!dateOfBirth) return '';
+  const [y, m, d] = dateOfBirth.split('-').map(Number);
+  let years = today.getFullYear() - y;
+  let months = today.getMonth() + 1 - m;
+  let days = today.getDate() - d;
+  if (days < 0) {
+    months -= 1;
+    days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+  const parts = [[years, 'y'], [months, 'm'], [days, 'd']].filter(([n]) => n > 0).map(([n, u]) => `${n}${u}`);
+  return parts.length ? parts.join(' ') : '0d';
+}
+
 export function labelize(value) {
   if (!value) return '—';
   const text = String(value).replace(/_/g, ' ').toLowerCase();

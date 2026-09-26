@@ -21,9 +21,16 @@ const schema = z.object({
   currencySymbol: requiredText('Currency symbol', 5),
   availabilityText: optionalText('Availability', 60),
   sidebarMode: z.enum(['FULL', 'ICONS']),
+  autoRefreshSeconds: z.coerce.number().int().min(0).max(600),
 });
 
-const pick = (settings) => ({ ...Object.fromEntries(Object.keys(schema.shape).map((key) => [key, settings[key] ?? ''])), sidebarMode: settings.sidebarMode || 'FULL' });
+const REFRESH_OPTIONS = [
+  { value: '0', label: 'Off — only when a screen is opened' }, { value: '5', label: 'Every 5 seconds' },
+  { value: '10', label: 'Every 10 seconds (recommended)' }, { value: '15', label: 'Every 15 seconds' },
+  { value: '30', label: 'Every 30 seconds' }, { value: '60', label: 'Every minute' }, { value: '120', label: 'Every 2 minutes' },
+];
+
+const pick = (settings) => ({ ...Object.fromEntries(Object.keys(schema.shape).map((key) => [key, settings[key] ?? ''])), sidebarMode: settings.sidebarMode || 'FULL', autoRefreshSeconds: String(settings.autoRefreshSeconds ?? 10) });
 
 /** Saves a partial change by merging it over the current settings (the API expects the whole record). */
 export function useSettingsSave(settings) {
@@ -57,6 +64,8 @@ function ClinicForm({ settings }) {
               <TextField label="Registration number" error={errorOf('registrationNo')} {...register('registrationNo')} />
               <TextField label="Currency symbol" required hint="Used when showing fees and estimates" error={errorOf('currencySymbol')} {...register('currencySymbol')} />
               <SelectField label="Menu style (default)" hint="Users can still collapse or expand the menu" options={[{ value: 'FULL', label: 'Full — icons and names' }, { value: 'ICONS', label: 'Compact — icons only' }]} {...register('sidebarMode')} />
+              <SelectField label="Auto-refresh lists" hint="Queue, dashboard, admissions and patient lists update by themselves on every device"
+                options={REFRESH_OPTIONS} error={errorOf('autoRefreshSeconds')} {...register('autoRefreshSeconds')} />
               <TextField label="Availability highlight" placeholder="24×7" hint="Shown in the prescription header, e.g. 24×7" error={errorOf('availabilityText')} {...register('availabilityText')} />
             </FormGrid>
             {!readOnly && <div className="flex justify-end"><Button type="submit" icon={Save} loading={form.saving}>Save</Button></div>}

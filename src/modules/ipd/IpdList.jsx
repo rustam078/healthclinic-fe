@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useLiveList } from '../../hooks/useLiveList';
 import { BedDouble } from 'lucide-react';
 import { ipdApi } from '../../api/endpoints';
 import { useList } from '../../hooks/useResource';
@@ -19,7 +20,7 @@ export default function IpdList() {
   const navigate = useNavigate();
   const { can } = useAuth();
   const [filters, setFilters] = useFilters(DEFAULTS);
-  const query = useList(ipdApi, filters);
+  const query = useList(ipdApi, filters, useLiveList());
   const actions = (row) => <Button size="sm" variant="ghost" to={`/ipd/${row.id}`}>View</Button>;
 
   const toolbar = (

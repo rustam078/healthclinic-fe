@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { LogIn } from 'lucide-react';
@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../../context/AuthContext';
 import { useClinicSettings } from '../../hooks/useClinicSettings';
+import { usePageTitle } from '../../hooks/useBrowserTab';
 import { TextField } from '../../components/form/Fields';
 import PasswordField from '../../components/form/PasswordField';
 import Button from '../../components/ui/Button';
@@ -24,7 +25,7 @@ export default function LoginPage() {
   const [serverError, setServerError] = useState('');
   const { register, handleSubmit, formState } = useForm({ resolver: zodResolver(schema) });
 
-  useEffect(() => { document.title = 'Sign in · Clinic'; }, []);
+  usePageTitle('Sign in');
   if (user) return <Navigate to={location.state?.from?.pathname || '/'} replace />;
 
   const onSubmit = handleSubmit(async (values) => {

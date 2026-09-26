@@ -2,11 +2,12 @@ const DEFAULT_LOGO = '/assets/logo/default-logo.svg';
 const JUSTIFY = { LEFT: 'justify-start', CENTER: 'justify-center', RIGHT: 'justify-end' };
 
 /**
- * Shows the clinic logo inside a fixed box without distortion or cropping:
- * the image scales proportionally (object-fit: contain) to the box's max width/height.
+ * Shows the clinic logo in a box of the given width and height.
+ * stretch: the image fills exactly that width x height (sizes set in Settings / templates);
+ * otherwise it grows to the box keeping its proportions (sidebar, login page).
  * Falls back to the neutral default logo when none is uploaded.
  */
-export default function LogoBox({ src, width, height, alt = 'Clinic logo', position = 'CENTER', className = '' }) {
+export default function LogoBox({ src, width, height, alt = 'Clinic logo', position = 'CENTER', stretch = false, className = '' }) {
   return (
     <div
       className={`flex shrink-0 items-center overflow-hidden ${JUSTIFY[position] || JUSTIFY.CENTER} ${className}`}
@@ -15,8 +16,7 @@ export default function LogoBox({ src, width, height, alt = 'Clinic logo', posit
       <img
         src={src || DEFAULT_LOGO}
         alt={alt}
-        className="block h-auto w-auto object-contain"
-        style={{ maxWidth: '100%', maxHeight: '100%' }}
+        className={`block h-full w-full ${stretch ? 'object-fill' : 'object-contain'}`}
       />
     </div>
   );
