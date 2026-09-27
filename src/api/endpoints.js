@@ -1,7 +1,8 @@
 import client from './client';
 import { cleanParams, createResource } from './resource';
 
-const data = (promise) => promise.then((body) => body.data);
+/** The response's data; null when there is none (the server leaves out empty fields, e.g. no doctor yet). */
+const data = (promise) => promise.then((body) => body.data ?? null);
 
 export const patientsApi = createResource('patients');
 export const doctorsApi = { ...createResource('doctors'), clinic: () => data(client.get('/doctors/clinic')) };

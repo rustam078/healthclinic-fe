@@ -12,7 +12,7 @@ export function cleanParams(params = {}) {
  * Every call resolves to the `data` part of the ApiResponse envelope.
  */
 export function createResource(path) {
-  const unwrap = (promise) => promise.then((body) => body.data);
+  const unwrap = (promise) => promise.then((body) => body.data ?? null);
   return {
     key: path,
     list: (params) => unwrap(client.get(`/${path}`, { params: cleanParams(params) })),
