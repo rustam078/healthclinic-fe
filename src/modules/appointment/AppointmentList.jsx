@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useLiveList } from '../../hooks/useLiveList';
 import { CalendarDays, CalendarPlus, Eye, FileText, NotebookPen } from 'lucide-react';
@@ -26,12 +27,17 @@ const PRESETS = [
   { id: 'all', label: 'All dates', range: () => ({ from: '', to: '' }) },
 ];
 
-/** The queue: waiting patients first in token order (first come, first served), completed ones at the end. */
-export default function AppointmentList() {
+/**
+ * The queue: waiting patients first in token order (first come, first served), completed ones at the end.
+ * onCount receives how many appointments match the current filters (shown on the Queue tab).
+ */
+export default function AppointmentList({ onCount }) {
   const { can } = useAuth();
   const [filters, setFilters] = useFilters({ search: '', status: '', type: '', ...today() });
   const [searchParams, setSearchParams] = useSearchParams();
   const query = useList(appointmentsApi, filters, useLiveList());
+  const total = query.data?.totalElements;
+  useEffect(() => { if (total != null) onCount?.(total); }, [total, onCount]);
   const { data: settings } = useClinicSettings();
   const actions = useAppointmentActions();
   const openView = (id) => setSearchParams((params) => {

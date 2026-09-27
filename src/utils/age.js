@@ -18,12 +18,17 @@ export function ageParts(dateOfBirth, today = new Date()) {
   return years < 0 ? null : { years, months, days };
 }
 
-/** Date of birth from an age such as "5 months 18 days" or "1 year 6 months". */
+/**
+ * Date of birth from an age such as "5 months 18 days" or "1 year 6 months". Years and months are taken off first
+ * and the day is kept inside the target month (31 Mar minus 1 month = 28 Feb, not 3 Mar), then the days.
+ */
 export function dobFromParts({ years = 0, months = 0, days = 0 }) {
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
-  date.setFullYear(date.getFullYear() - years);
-  date.setMonth(date.getMonth() - months);
+  const today = new Date();
+  const monthIndex = today.getFullYear() * 12 + today.getMonth() - years * 12 - months;
+  const year = Math.floor(monthIndex / 12);
+  const month = monthIndex - year * 12;
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const date = new Date(year, month, Math.min(today.getDate(), lastDay));
   date.setDate(date.getDate() - days);
   return isoDate(date);
 }

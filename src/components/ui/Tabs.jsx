@@ -9,12 +9,20 @@ export function useTab(tabs, param = 'tab') {
   return [active, setActive];
 }
 
-/** Horizontally scrollable tab bar (works on phones). */
+const BADGE = {
+  attention: 'bg-amber-100 text-amber-900',
+  info: 'bg-brand-50 text-brand-800 ring-1 ring-inset ring-brand-100',
+};
+
+/**
+ * Horizontally scrollable tab bar (works on phones). A tab can show a count badge: tone "attention" (default,
+ * amber, hidden when 0) for things waiting for action, or "info" (teal, also shows 0) for a plain total.
+ */
 export default function Tabs({ tabs, active, onChange, label }) {
   return (
     <div className="relative -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
       <div role="tablist" aria-label={label} className="flex min-w-max gap-1 border-b border-slate-200">
-        {tabs.map(({ id, label: text, icon: Icon, count }) => {
+        {tabs.map(({ id, label: text, icon: Icon, count, tone = 'attention' }) => {
           const selected = id === active;
           return (
             <button
@@ -29,7 +37,9 @@ export default function Tabs({ tabs, active, onChange, label }) {
             >
               {Icon && <Icon className="size-4" aria-hidden />}
               {text}
-              {count > 0 && <span className="rounded-full bg-amber-100 px-1.5 text-xs text-amber-900">{count}</span>}
+              {(count > 0 || (tone === 'info' && count != null)) && (
+                <span className={`rounded-full px-1.5 text-xs tabular-nums ${BADGE[tone] || BADGE.attention}`}>{count}</span>
+              )}
             </button>
           );
         })}

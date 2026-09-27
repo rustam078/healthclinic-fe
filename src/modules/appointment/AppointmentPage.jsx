@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart3, CalendarDays, CalendarPlus, Inbox } from 'lucide-react';
 import { deleteRequestsApi } from '../../api/endpoints';
@@ -19,11 +20,16 @@ const TABS = [
 export default function AppointmentPage() {
   const { can } = useAuth();
   const [tab, setTab] = useTab(TABS);
+  const [queueCount, setQueueCount] = useState();
   const pending = useQuery({
     queryKey: [deleteRequestsApi.key, 'pending-count'],
     queryFn: () => deleteRequestsApi.list({ status: 'PENDING', size: 1 }),
   });
-  const tabs = TABS.map((item) => (item.id === 'requests' ? { ...item, count: pending.data?.totalElements } : item));
+  const counts = {
+    appointments: { count: queueCount, tone: 'info' },
+    requests: { count: pending.data?.totalElements },
+  };
+  const tabs = TABS.map((item) => ({ ...item, ...counts[item.id] }));
 
   return (
     <>
@@ -34,7 +40,7 @@ export default function AppointmentPage() {
       />
       <div className="space-y-4">
         <Tabs tabs={tabs} active={tab} onChange={setTab} label="Appointment sections" />
-        {tab === 'appointments' && <AppointmentList />}
+        {tab === 'appointments' && <AppointmentList onCount={setQueueCount} />}
         {tab === 'requests' && <DeleteRequestList />}
         {tab === 'reports' && <AppointmentReport />}
       </div>
