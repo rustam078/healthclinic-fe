@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { doctorsApi } from '../../../api/endpoints';
-import DocumentTemplate from '../../../components/print/DocumentTemplate';
+import DocumentTemplate, { headerAlignClass } from '../../../components/print/DocumentTemplate';
 import LogoBox from '../../../components/print/LogoBox';
 import { formatDate, shortAge } from '../../../utils/format';
 import { inkToDataUrl, parseStrokes } from './ink';
@@ -13,7 +13,8 @@ export const SIGNATURE_RATIO = 0.3;
 /** Size of the handwriting area; identical on the pad, in print and in the Settings preview. */
 export function rxArea(template) {
   const width = template.pageWidth - template.padding * 2;
-  const fixed = template.padding * 2 + template.headerHeight + template.margin
+  const verticalPadding = (template.paddingTop ?? template.padding) + (template.paddingBottom ?? template.padding);
+  const fixed = verticalPadding + template.headerHeight + template.margin
     + BLOCKS.band + BLOCKS.closing + (template.showFooter ? BLOCKS.footer : 0) + BLOCKS.borders;
   const height = Math.max(200, Math.floor(template.pageHeight - fixed));
   return { width, height, ratio: height / width };
@@ -40,8 +41,9 @@ function PrescriptionHeader({ template, settings, doctor }) {
   const accent = template.accentColor || '#0f766e';
   const contact = [settings?.phone, settings?.email].filter(Boolean).join(' · ');
   return (
-    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2" style={{ minHeight: template.headerHeight, borderColor: accent }}>
-      <div className="min-w-0 text-left">
+    <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b-2"
+      style={{ minHeight: template.headerHeight, paddingTop: template.headerPaddingTop || 0, borderColor: accent }}>
+      <div className={`min-w-0 ${headerAlignClass(template, 'text-left')}`}>
         <p className="text-base leading-tight font-bold" style={{ color: accent }}>{settings?.clinicName}</p>
         {settings?.address && <p className="text-xs text-slate-600">{settings.address}</p>}
         {contact && <p className="text-xs text-slate-600">{contact}</p>}

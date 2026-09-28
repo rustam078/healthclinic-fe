@@ -1,6 +1,20 @@
 import LogoBox from './LogoBox';
 import { formatDate } from '../../utils/format';
 
+const ALIGN = { LEFT: 'text-left', CENTER: 'text-center', RIGHT: 'text-right' };
+
+/** Text alignment class for the clinic details in a header; AUTO (or unset) uses the given default. */
+export function headerAlignClass(template, fallback) {
+  return ALIGN[template.headerTextAlign] || fallback;
+}
+
+/** Page padding: top / sides (left & right) / bottom; older templates only have one value. */
+export function pagePadding(template) {
+  const top = template.paddingTop ?? template.padding;
+  const bottom = template.paddingBottom ?? template.padding;
+  return `${top}px ${template.padding}px ${bottom}px`;
+}
+
 /**
  * The clinic's printable page. All sizes come from the template settings (CSS px), so changing a
  * dimension in Settings changes the preview and the printout identically.
@@ -10,7 +24,7 @@ export default function DocumentTemplate({ template, settings, title, date = new
   return (
     <article
       className="document-page mx-auto flex flex-col bg-white text-slate-900"
-      style={{ width: template.pageWidth, minHeight: template.pageHeight, padding: template.padding, borderTop: `6px solid ${accent}` }}
+      style={{ width: template.pageWidth, minHeight: template.pageHeight, padding: pagePadding(template), borderTop: `6px solid ${accent}` }}
     >
       {header || <DocumentHeader template={template} settings={settings} accent={accent} />}
       {showTitle ? (
@@ -31,12 +45,12 @@ function DocumentHeader({ template, settings, accent }) {
   return (
     <header
       className={`flex items-center gap-4 border-b ${position === 'RIGHT' ? 'flex-row-reverse' : ''} ${position === 'CENTER' ? 'flex-col justify-center text-center' : ''}`}
-      style={{ minHeight: template.headerHeight, borderColor: `${accent}55` }}
+      style={{ minHeight: template.headerHeight, paddingTop: template.headerPaddingTop || 0, borderColor: `${accent}55` }}
     >
       {template.showLogo && (
         <LogoBox src={settings?.logoUrl} width={template.logoAreaWidth} height={template.logoAreaHeight} position={position} stretch />
       )}
-      <div className={`min-w-0 flex-1 ${position === 'RIGHT' ? 'text-left' : position === 'CENTER' ? '' : 'text-right'}`}>
+      <div className={`min-w-0 flex-1 ${headerAlignClass(template, position === 'RIGHT' ? 'text-left' : position === 'CENTER' ? '' : 'text-right')}`}>
         <p className="text-base font-bold" style={{ color: accent }}>{settings?.clinicName}</p>
         {settings?.headerText && <p className="text-xs text-slate-600 italic">{settings.headerText}</p>}
         {settings?.address && <p className="text-xs text-slate-600">{settings.address}</p>}

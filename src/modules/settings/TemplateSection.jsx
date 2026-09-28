@@ -27,7 +27,11 @@ const baseSchema = z.object({
   headerHeight: intRange('Header height', 40, 400),
   logoAreaWidth: intRange('Logo area width', 20, 600),
   logoAreaHeight: intRange('Logo area height', 20, 300),
-  padding: intRange('Padding', 0, 100),
+  padding: intRange('Side padding', 0, 100),
+  paddingTop: intRange('Top padding', 0, 200),
+  paddingBottom: intRange('Bottom padding', 0, 200),
+  headerPaddingTop: intRange('Space above header content', 0, 200),
+  headerTextAlign: z.enum(['AUTO', 'LEFT', 'CENTER', 'RIGHT']),
   margin: intRange('Margin', 0, 100),
   showLogo: z.boolean(),
   showFooter: z.boolean(),
@@ -36,7 +40,7 @@ const baseSchema = z.object({
 });
 const schemaShape = baseSchema.shape;
 
-const schema = baseSchema.refine((t) => t.logoAreaHeight <= t.headerHeight, { path: ['logoAreaHeight'], message: 'Logo area cannot be taller than the header' })
+const schema = baseSchema.refine((t) => t.logoAreaHeight + t.headerPaddingTop <= t.headerHeight, { path: ['logoAreaHeight'], message: 'The logo and the top space do not fit in the header height' })
   .refine((t) => t.logoAreaWidth <= t.pageWidth - 2 * t.padding, { path: ['logoAreaWidth'], message: 'Logo area is wider than the page content' });
 
 const PAGE_PRESETS = [
@@ -97,7 +101,7 @@ function TemplateEditor({ template }) {
           </form>
         </CardBody>
       </Card>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden xl:sticky xl:top-20 xl:self-start">
         <CardHeader title="Preview" subtitle={`${preview.pageWidth} × ${preview.pageHeight} px · scaled to fit`} />
         <ScaledPreview template={preview} />
       </Card>
@@ -128,6 +132,7 @@ function TemplateFields({ form }) {
   const number = (name, label, extra = {}) => <TextField label={label} type="number" inputMode="numeric" error={errorOf(name)} {...extra} {...register(name)} />;
   return (
     <>
+      <ThemeColour form={form} />
       <FormSection title="Document">
         <div className="space-y-4">
           <TextField label="Document title" error={errorOf('title')} {...register('title')} />
@@ -138,22 +143,38 @@ function TemplateFields({ form }) {
       <FormSection title="Header & logo area">
         <FormGrid>
           {number('headerHeight', 'Header height')}
-          <div />
+          {number('headerPaddingTop', 'Space above header content')}
           {number('logoAreaWidth', 'Logo area width')}
           {number('logoAreaHeight', 'Logo area height')}
         </FormGrid>
         <CheckboxField label="Show logo" className="mt-3" {...register('showLogo')} />
       </FormSection>
-      <FormSection title="Spacing & style">
+      <FormSection title="Page spacing">
         <FormGrid>
-          {number('padding', 'Padding')}
+          {number('paddingTop', 'Top padding')}
+          {number('paddingBottom', 'Bottom padding')}
+          {number('padding', 'Side padding (left & right)')}
           {number('margin', 'Section margin')}
-          <TextField label="Accent colour" type="color" className="[&_input]:p-1" error={errorOf('accentColor')} {...register('accentColor')} />
         </FormGrid>
-        <CheckboxField label="Show footer" className="mt-3" {...register('showFooter')} />
+      </FormSection>
+      <FormSection title="Footer">
+        <CheckboxField label="Show footer" {...register('showFooter')} />
         <TextField label="Footer text" className="mt-3" error={errorOf('footerText')} {...register('footerText')} />
       </FormSection>
     </>
+  );
+}
+
+/** First section: the document's theme colour; the preview follows instantly. */
+function ThemeColour({ form }) {
+  const { register, errorOf, watch } = form;
+  return (
+    <FormSection title="Theme colour">
+      <div className="flex flex-wrap items-end gap-3">
+        <TextField label="Accent colour" type="color" className="w-24 [&_input]:p-1" error={errorOf('accentColor')} {...register('accentColor')} />
+        <span className="pb-2.5 font-mono text-sm text-slate-600">{watch('accentColor')}</span>
+      </div>
+    </FormSection>
   );
 }
 
